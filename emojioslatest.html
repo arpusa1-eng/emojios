@@ -6,27 +6,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
+      margin: 0; padding: 0;
       font-family: 'Segoe UI', sans-serif;
       background: url('https://em-content.zobj.net/thumbs/240/apple/354/star_2b50.png') repeat;
       background-size: 60px;
+      cursor: url('https://cur.cursors-4u.net/cursors/cur-8/cur771.cur'), auto;
       transition: background-color 0.3s, font-size 0.3s;
     }
     #desktop {
+      display: none;
       position: relative;
       width: 100vw;
       height: calc(100vh - 40px);
     }
     .window {
       position: absolute;
-      width: 400px;
-      height: 300px;
+      width: 400px; height: 300px;
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.3);
-      overflow: hidden;
       display: flex;
       flex-direction: column;
       resize: both;
@@ -43,18 +41,13 @@
       cursor: move;
     }
     .title-bar-buttons {
-      display: flex;
-      gap: 6px;
+      display: flex; gap: 6px;
     }
     .btn {
-      background: #fff;
-      color: #0078D7;
-      border: none;
-      border-radius: 3px;
-      width: 20px;
-      height: 20px;
-      font-size: 14px;
-      cursor: pointer;
+      background: #fff; color: #0078D7;
+      border: none; border-radius: 3px;
+      width: 20px; height: 20px;
+      font-size: 14px; cursor: pointer;
     }
     .content {
       flex-grow: 1;
@@ -63,36 +56,47 @@
     }
 
     .taskbar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 40px;
+      position: fixed; bottom: 0; left: 0;
+      width: 100%; height: 40px;
       background: rgba(0,0,0,0.7);
-      color: white;
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      z-index: 100;
+      color: white; display: flex; align-items: center;
+      padding: 0 10px; z-index: 100;
     }
 
     .start {
-      background: #222;
-      padding: 6px 14px;
-      border-radius: 5px;
+      background: none; padding: 4px;
+      font-size: 18px;
+      border: none;
+      border-radius: 50%;
       cursor: pointer;
     }
 
-    #startMenu {
+    #taskbarApps {
+      display: flex;
+      gap: 6px;
+      margin-left: 10px;
+    }
+
+    #liveClock {
+      margin-left: auto;
+      padding: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    #startMenu, #calendarPopup {
       position: fixed;
-      bottom: 40px;
-      left: 10px;
-      width: 200px;
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
       display: none;
       z-index: 101;
+    }
+
+    #startMenu {
+      bottom: 40px;
+      left: 10px;
+      width: 200px;
     }
 
     #startMenu ul {
@@ -111,33 +115,97 @@
       background-color: #eee;
     }
 
-    #liveClock {
-      margin-left: auto;
-      padding: 6px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
     #calendarPopup {
-      position: fixed;
       bottom: 40px;
       left: 10px;
-      background: #fff;
       padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.3);
-      display: none;
+    }
+
+    #userSetupScreen, #loginScreen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: #f0f0f0;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      z-index: 1000;
+    }
+
+    .login-background {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: url('https://em-content.zobj.net/thumbs/240/apple/354/milky-way_1f30c.png') center/cover;
+      filter: blur(4px); z-index: -1;
+    }
+
+    .login-box {
+      background: rgba(255,255,255,0.9);
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 0 12px rgba(0,0,0,0.3);
+    }
+
+    .login-box input {
+      margin-top: 12px;
+      padding: 10px;
+      width: 200px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .login-box button {
+      margin-top: 14px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #0078D7;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
+  <!-- FIRST-TIME SETUP SCREEN -->
+  <div id="userSetupScreen" style="display:none;">
+    <h2>Create Your EmojiOS Account</h2>
+    <select id="emojiAvatar">
+      <option>🧑‍💻</option>
+      <option>🧙‍♂️</option>
+      <option>🦸‍♀️</option>
+      <option>🧟‍♂️</option>
+      <option>🧑‍🚀</option>
+    </select><br /><br />
+    <input type="text" id="setupUsername" placeholder="Username" /><br /><br />
+    <input type="password" id="setupPassword" placeholder="Password" /><br /><br />
+    <button onclick="createAccount()">Create Account</button>
+  </div>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" style="display:none;">
+    <div class="login-background"></div>
+    <div class="login-box">
+      <div id="loginAvatar" style="font-size:48px;">🧑‍💻</div>
+      <div id="loginUsername">User</div>
+      <input type="password" id="loginPassword" placeholder="Enter password to unlock" />
+      <button onclick="verifyLogin()">🔓 Unlock</button>
+    </div>
+  </div>
+
+  <!-- DESKTOP ENVIRONMENT -->
   <div id="desktop"></div>
 
+  <!-- TASKBAR -->
   <div class="taskbar">
-    <div class="start" onclick="toggleStartMenu()">🪟 Start</div>
+    <div class="start" onclick="toggleStartMenu()">🪟</div>
+    <div id="taskbarApps"></div>
     <div id="liveClock" onclick="toggleCalendar()">🕰️ 00:00</div>
   </div>
 
+  <!-- START MENU -->
   <div id="startMenu">
     <ul>
       <li onclick="launchApp('calculator')">🧮 Calculator</li>
@@ -152,375 +220,420 @@
     </ul>
   </div>
 
+  <!-- CALENDAR POPUP -->
   <div id="calendarPopup">
     <div id="calendarDate">📅 July 2025</div>
   </div>
-  <script>
-let pinnedApps = new Set();
-let openApps = new Set();
-
-// Dragging logic
-function makeDraggable(win) {
-  const title = win.querySelector(".title-bar");
-  let isDragging = false, offsetX, offsetY;
-
-  title.addEventListener("mousedown", e => {
-    isDragging = true;
-    offsetX = e.clientX - win.offsetLeft;
-    offsetY = e.clientY - win.offsetTop;
-    win.style.zIndex = 100 + Math.random();
-    document.body.style.userSelect = "none";
-  });
-
-  document.addEventListener("mousemove", e => {
-    if (isDragging) {
-      win.style.left = `${e.clientX - offsetX}px`;
-      win.style.top = `${e.clientY - offsetY}px`;
+<script>
+  // 🧠 Multi-User Login Logic
+  function emojiOSBoot() {
+    const user = localStorage.getItem("emojiUser");
+    if (!user) {
+      document.getElementById("userSetupScreen").style.display = "flex";
+    } else {
+      launchLoginScreen();
     }
-  });
-
-  document.addEventListener("mouseup", () => {
-    isDragging = false;
-    document.body.style.userSelect = "";
-  });
-
-  win.addEventListener("contextmenu", e => {
-    e.preventDefault();
-    showContextMenu(win.id, e.pageX, e.pageY);
-  });
-}
-
-// Window controls
-function minimize(id) {
-  document.getElementById(id).style.display = "none";
-  if (!pinnedApps.has(id)) removeTaskbarIcon(id);
-  openApps.delete(id);
-}
-
-function maximize(id) {
-  const win = document.getElementById(id);
-  win.style.top = "0px";
-  win.style.left = "0px";
-  win.style.width = "100vw";
-  win.style.height = "calc(100vh - 40px)";
-}
-
-function closeWindow(id) {
-  const win = document.getElementById(id);
-  win.remove();
-  if (!pinnedApps.has(id)) removeTaskbarIcon(id);
-  openApps.delete(id);
-}
-
-function toggleStartMenu() {
-  const menu = document.getElementById("startMenu");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
-}
-
-function launchApp(appId) {
-  toggleStartMenu();
-  const exists = document.getElementById(appId);
-  if (exists) {
-    exists.style.display = "block";
-    openApps.add(appId);
-    return;
   }
 
-  const win = document.createElement("div");
-  win.className = "window";
-  win.id = appId;
-  win.style.top = `${100 + Math.random() * 300}px`;
-  win.style.left = `${100 + Math.random() * 400}px`;
-  if (appId === "browser") {
-    win.style.width = "800px";
-    win.style.height = "500px";
+  function createAccount() {
+    const emoji = document.getElementById("emojiAvatar").value;
+    const username = document.getElementById("setupUsername").value.trim();
+    const password = document.getElementById("setupPassword").value.trim();
+    if (!username || !password) return alert("Please fill out all fields.");
+    const user = { avatar: emoji, username, password };
+    localStorage.setItem("emojiUser", JSON.stringify(user));
+    document.getElementById("userSetupScreen").style.display = "none";
+    launchLoginScreen();
   }
 
-  const title = document.createElement("div");
-  title.className = "title-bar";
-  title.innerHTML = `<span>${getEmoji(appId)} ${capitalize(appId)}</span>
-    <div class="title-bar-buttons">
-      <button class="btn" onclick="minimize('${appId}')">–</button>
-      <button class="btn" onclick="maximize('${appId}')">□</button>
-      <button class="btn" onclick="closeWindow('${appId}')">✕</button>
-    </div>`;
-
-  const content = document.createElement("div");
-  content.className = "content";
-  content.innerHTML = getAppContent(appId);
-  win.appendChild(title);
-  win.appendChild(content);
-  document.getElementById("desktop").appendChild(win);
-  makeDraggable(win);
-  openApps.add(appId);
-  addTaskbarIcon(appId);
-
-  if (appId === "image") setupImageViewer();
-  if (appId === "settings") setupSettings();
-  if (appId === "notes") setupNotes();
-  if (appId === "calculator") setupCalculator();
-  if (appId === "clock") updateClock();
-  if (appId === "explorer") setupExplorer();
-  if (appId === "browser") setupBrowser();
-  if (appId === "terminal") setupTerminal();
-}
-
-// Taskbar management
-function addTaskbarIcon(id) {
-  if (document.getElementById("task-" + id)) return;
-  const icon = document.createElement("div");
-  icon.id = "task-" + id;
-  icon.textContent = getEmoji(id);
-  icon.style.padding = "6px";
-  icon.style.cursor = "pointer";
-  icon.addEventListener("click", () => launchApp(id));
-  icon.addEventListener("contextmenu", e => {
-    e.preventDefault();
-    showContextMenu(id, e.pageX, e.pageY);
-  });
-  document.querySelector(".taskbar").appendChild(icon);
-}
-
-function removeTaskbarIcon(id) {
-  const el = document.getElementById("task-" + id);
-  if (el) el.remove();
-}
-
-function showContextMenu(id, x, y) {
-  let menu = document.getElementById("contextMenu");
-  if (!menu) {
-    menu = document.createElement("div");
-    menu.id = "contextMenu";
-    menu.style.position = "fixed";
-    menu.style.background = "#fff";
-    menu.style.border = "1px solid #ccc";
-    menu.style.padding = "6px";
-    menu.style.zIndex = "9999";
-    menu.style.borderRadius = "6px";
-    document.body.appendChild(menu);
+  function launchLoginScreen() {
+    const user = JSON.parse(localStorage.getItem("emojiUser"));
+    document.getElementById("loginScreen").style.display = "flex";
+    document.getElementById("loginAvatar").textContent = user.avatar;
+    document.getElementById("loginUsername").textContent = user.username;
   }
-  menu.innerHTML = `
-    <div onclick="pinApp('${id}')">${pinnedApps.has(id) ? "Unpin" : "Pin"} App 📌</div>
-    <div onclick="closeWindow('${id}')">Close App 🗑️</div>
-  `;
-  menu.style.left = x + "px";
-  menu.style.top = y + "px";
-  menu.style.display = "block";
-}
 
-document.addEventListener("click", () => {
-  const menu = document.getElementById("contextMenu");
-  if (menu) menu.style.display = "none";
-});
-
-function pinApp(id) {
-  if (pinnedApps.has(id)) {
-    pinnedApps.delete(id);
-    if (!openApps.has(id)) removeTaskbarIcon(id);
-  } else {
-    pinnedApps.add(id);
-    addTaskbarIcon(id);
+  function verifyLogin() {
+    const input = document.getElementById("loginPassword").value.trim();
+    const user = JSON.parse(localStorage.getItem("emojiUser"));
+    if (input === user.password) {
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("desktop").style.display = "block";
+    } else {
+      alert("Incorrect password.");
+    }
   }
-}
 
-// Utilities
-function getEmoji(id) {
-  return {
-    calculator: "🧮", notes: "📝", image: "🖼️", explorer: "📁",
-    settings: "⚙️", browser: "🌐", clock: "🕰️", games: "🎮", terminal: "🖥️"
-  }[id] || "📦";
-}
+  // 🕰️ Time + Calendar
+  function updateLiveClock() {
+    const now = new Date();
+    document.getElementById("liveClock").textContent = now.toLocaleTimeString();
+    document.getElementById("calendarDate").textContent = now.toLocaleDateString("en-US", {
+      weekday: "long", year: "numeric", month: "long", day: "numeric"
+    });
+  }
+  setInterval(updateLiveClock, 1000);
+  updateLiveClock();
 
-function capitalize(s) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
+  // 📅 Show Calendar
+  function toggleCalendar() {
+    const cal = document.getElementById("calendarPopup");
+    cal.style.display = cal.style.display === "block" ? "none" : "block";
+  }
 
-function toggleCalendar() {
-  const cal = document.getElementById("calendarPopup");
-  cal.style.display = cal.style.display === "block" ? "none" : "block";
-}
+  // 🪟 Start Menu
+  function toggleStartMenu() {
+    const menu = document.getElementById("startMenu");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  }
 
-function updateLiveClock() {
-  const now = new Date();
-  document.getElementById("liveClock").textContent = now.toLocaleTimeString();
-  document.getElementById("calendarDate").textContent = now.toLocaleDateString("en-US", {
-    weekday: "long", year: "numeric", month: "long", day: "numeric"
-  });
-}
-setInterval(updateLiveClock, 1000);
-updateLiveClock();
+  // 🖥️ App Launch and Window Logic (to be expanded in Part 4)
 </script>
 <script>
-function getAppContent(id) {
-  switch (id) {
-    case "calculator":
-      return `<input id="calcDisplay" type="text" style="width:100%; font-size:20px; text-align:right;" />
-        <br />
-        <div>${["7","8","9","/","4","5","6","*","1","2","3","-","0",".","=","+"].map(b => 
-        `<button onclick="pressCalc('${b}')">${b}</button>`).join('')}</div>`;
+  let pinnedApps = new Set();
+  let openApps = new Set();
 
-    case "notes":
-      return `<textarea id="noteArea" style="width:100%; height:80%;"></textarea>`;
+  // Dragging
+  function makeDraggable(win) {
+    const title = win.querySelector(".title-bar");
+    let isDragging = false, offsetX, offsetY;
 
-    case "image":
-      return `<input type="file" id="imgUpload" accept="image/*" /><br /><img id="uploadedImage" style="max-width:100%; border-radius:8px;" />`;
+    title.addEventListener("mousedown", e => {
+      isDragging = true;
+      offsetX = e.clientX - win.offsetLeft;
+      offsetY = e.clientY - win.offsetTop;
+      win.style.zIndex = 100 + Math.random();
+      document.body.style.userSelect = "none";
+    });
 
-    case "explorer":
-      return `<div>
-        <select id="folderSelect">
-          <option value="Pictures">📷 Pictures</option>
-          <option value="Documents">📄 Documents</option>
-          <option value="Games">🎮 Games</option>
-        </select>
-        <ul id="fileList" style="margin-top:10px;"></ul>
-      </div>`;
-
-    case "settings":
-      return `<h3>EmojiOS Settings</h3>
-        <label><input type="checkbox" id="wallpaperToggle" checked /> Emoji Wallpaper</label><br />
-        <label>Theme:
-          <select id="themeSelect">
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </label><br />
-        <label>Font Size: <input type="range" id="fontSlider" min="12" max="24" value="16" /></label>`;
-
-    case "browser":
-      return `<select id="serverSelect">
-          <option value="https://whyskibidisigmabro.yes.flop.hpc.tw">Server 1</option>
-          <option value="https://ram3-shikenaka.techplancad.ru/">Server 2</option>
-          <option value="https://study-work.cbu.net/">Server 3</option>
-        </select>
-        <iframe id="browserFrame" style="width:100%; height:80%; border:none;"></iframe>`;
-
-    case "clock":
-      return `<h2 id="clockTime">🕰️ 00:00:00</h2>`;
-
-    case "games":
-      return `<iframe src="https://pong-emoji.netlify.app" style="width:100%; height:100%; border:none;"></iframe>`;
-
-    case "terminal":
-      return `<div style="font-family:monospace; font-size:14px;">
-        <div id="termLog"></div>
-        <input id="termInput" type="text" placeholder="Type a command..." style="width:100%;" />
-      </div>`;
-
-    default:
-      return `<p>App not found</p>`;
-  }
-}
-
-// Explorer logic
-function setupExplorer() {
-  const fileData = {
-    Pictures: ["🖼️ selfie.png", "📸 vacation.jpg"],
-    Documents: ["📄 resume.docx", "📝 notes.txt"],
-    Games: ["🎮 pong.js", "🕹️ breakout.html"]
-  };
-  const select = document.getElementById("folderSelect");
-  const list = document.getElementById("fileList");
-
-  function renderFiles(folder) {
-    list.innerHTML = fileData[folder].map(f => `<li>${f}</li>`).join("");
-  }
-
-  select.addEventListener("change", e => renderFiles(e.target.value));
-  renderFiles(select.value);
-}
-
-// Browser logic
-function setupBrowser() {
-  const select = document.getElementById("serverSelect");
-  const iframe = document.getElementById("browserFrame");
-  iframe.src = select.value;
-  select.addEventListener("change", () => iframe.src = select.value);
-}
-
-// Notes
-function setupNotes() {
-  const area = document.getElementById("noteArea");
-  area.value = localStorage.getItem("emojiNotes") || "";
-  area.addEventListener("input", () => {
-    localStorage.setItem("emojiNotes", area.value);
-  });
-}
-
-// Image Viewer
-function setupImageViewer() {
-  document.getElementById("imgUpload").addEventListener("change", e => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = evt => document.getElementById("uploadedImage").src = evt.target.result;
-      reader.readAsDataURL(file);
-    }
-  });
-}
-
-// Calculator
-let calcValue = "";
-function setupCalculator() {
-  document.getElementById("calcDisplay").value = "";
-  calcValue = "";
-}
-function pressCalc(val) {
-  if (val === "=") {
-    try { calcValue = eval(calcValue).toString(); } catch { calcValue = "Error"; }
-  } else {
-    calcValue += val;
-  }
-  document.getElementById("calcDisplay").value = calcValue;
-}
-
-// Clock
-function updateClock() {
-  const clockElem = document.getElementById("clockTime");
-  function tick() {
-    const now = new Date();
-    clockElem.textContent = `🕰️ ${now.toLocaleTimeString()}`;
-  }
-  tick();
-  setInterval(tick, 1000);
-}
-
-// Settings
-function setupSettings() {
-  document.getElementById("wallpaperToggle").addEventListener("change", function () {
-    document.body.style.backgroundImage = this.checked
-      ? "url('https://em-content.zobj.net/thumbs/240/apple/354/star_2b50.png')" : "none";
-  });
-  document.getElementById("themeSelect").addEventListener("change", function () {
-    document.body.style.backgroundColor = this.value === "dark" ? "#1e1e1e" : "#f1f1f1";
-  });
-  document.getElementById("fontSlider").addEventListener("input", function () {
-    document.body.style.fontSize = `${this.value}px`;
-  });
-}
-
-// Terminal
-function setupTerminal() {
-  const input = document.getElementById("termInput");
-  const log = document.getElementById("termLog");
-  input.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") {
-      const cmd = input.value.trim();
-      input.value = "";
-      log.innerHTML += `<div>➜ ${cmd}</div>`;
-      switch (cmd) {
-        case "help": log.innerHTML += "<div>Commands: help, echo [text], clear, date</div>"; break;
-        case "clear": log.innerHTML = ""; break;
-        case "date": log.innerHTML += `<div>${new Date().toString()}</div>`; break;
-        default:
-          if (cmd.startsWith("echo ")) {
-            log.innerHTML += `<div>${cmd.slice(5)}</div>`;
-          } else {
-            log.innerHTML += `<div>Command not found: ${cmd}</div>`;
-          }
+    document.addEventListener("mousemove", e => {
+      if (isDragging) {
+        win.style.left = `${e.clientX - offsetX}px`;
+        win.style.top = `${e.clientY - offsetY}px`;
       }
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+      document.body.style.userSelect = "";
+    });
+
+    win.addEventListener("contextmenu", e => {
+      e.preventDefault();
+      showContextMenu(win.id, e.pageX, e.pageY);
+    });
+  }
+
+  // Window controls
+  function minimize(id) {
+    document.getElementById(id).style.display = "none";
+    if (!pinnedApps.has(id)) removeTaskbarIcon(id);
+    openApps.delete(id);
+  }
+
+  function maximize(id) {
+    const win = document.getElementById(id);
+    win.style.top = "0px";
+    win.style.left = "0px";
+    win.style.width = "100vw";
+    win.style.height = "calc(100vh - 40px)";
+  }
+
+  function closeWindow(id) {
+    const win = document.getElementById(id);
+    win.remove();
+    if (!pinnedApps.has(id)) removeTaskbarIcon(id);
+    openApps.delete(id);
+  }
+
+  // Launch any app
+  function launchApp(appId) {
+    toggleStartMenu();
+    const exists = document.getElementById(appId);
+    if (exists) {
+      exists.style.display = "block";
+      openApps.add(appId);
+      return;
     }
+
+    const win = document.createElement("div");
+    win.className = "window";
+    win.id = appId;
+    win.style.top = `${100 + Math.random() * 300}px`;
+    win.style.left = `${100 + Math.random() * 400}px`;
+
+    const title = document.createElement("div");
+    title.className = "title-bar";
+    title.innerHTML = `<span>${getEmoji(appId)} ${capitalize(appId)}</span>
+      <div class="title-bar-buttons">
+        <button class="btn" onclick="minimize('${appId}')">–</button>
+        <button class="btn" onclick="maximize('${appId}')">□</button>
+        <button class="btn" onclick="closeWindow('${appId}')">✕</button>
+      </div>`;
+
+    const content = document.createElement("div");
+    content.className = "content";
+    content.innerHTML = getAppContent(appId);
+    win.appendChild(title);
+    win.appendChild(content);
+    document.getElementById("desktop").appendChild(win);
+    makeDraggable(win);
+    openApps.add(appId);
+    addTaskbarIcon(appId);
+
+    // Initial setup triggers
+    if (appId === "image") setupImageViewer();
+    if (appId === "settings") setupSettings();
+    if (appId === "notes") setupNotes();
+    if (appId === "calculator") setupCalculator();
+    if (appId === "clock") updateClock();
+    if (appId === "explorer") setupExplorer();
+    if (appId === "browser") setupBrowser();
+    if (appId === "terminal") setupTerminal();
+    if (appId === "games") setupGames(); // ✅ Slope integration hook
+  }
+
+  // Taskbar icons
+  function addTaskbarIcon(id) {
+    if (!pinnedApps.has(id) || document.getElementById("task-" + id)) return;
+    const icon = document.createElement("div");
+    icon.id = "task-" + id;
+    icon.textContent = getEmoji(id);
+    icon.style.padding = "6px";
+    icon.style.cursor = "pointer";
+    icon.addEventListener("click", () => launchApp(id));
+    icon.addEventListener("contextmenu", e => {
+      e.preventDefault();
+      showContextMenu(id, e.pageX, e.pageY);
+    });
+    document.getElementById("taskbarApps").appendChild(icon);
+  }
+
+  function removeTaskbarIcon(id) {
+    const el = document.getElementById("task-" + id);
+    if (el) el.remove();
+  }
+
+  function showContextMenu(id, x, y) {
+    let menu = document.getElementById("contextMenu");
+    if (!menu) {
+      menu = document.createElement("div");
+      menu.id = "contextMenu";
+      menu.style.position = "fixed";
+      menu.style.background = "#fff";
+      menu.style.border = "1px solid #ccc";
+      menu.style.padding = "6px";
+      menu.style.zIndex = "9999";
+      menu.style.borderRadius = "6px";
+      document.body.appendChild(menu);
+    }
+    menu.innerHTML = `
+      <div onclick="pinApp('${id}')">${pinnedApps.has(id) ? "Unpin" : "Pin"} App 📌</div>
+      <div onclick="closeWindow('${id}')">Close App 🗑️</div>
+    `;
+    menu.style.left = x + "px";
+    menu.style.top = y + "px";
+    menu.style.display = "block";
+  }
+
+  document.addEventListener("click", () => {
+    const menu = document.getElementById("contextMenu");
+    if (menu) menu.style.display = "none";
   });
-}
+
+  function pinApp(id) {
+    if (pinnedApps.has(id)) {
+      pinnedApps.delete(id);
+      if (!openApps.has(id)) removeTaskbarIcon(id);
+    } else {
+      pinnedApps.add(id);
+      addTaskbarIcon(id);
+    }
+  }
+
+  // Utilities
+  function getEmoji(id) {
+    return {
+      calculator: "🧮", notes: "📝", image: "🖼️", explorer: "📁",
+      settings: "⚙️", browser: "🌐", clock: "🕰️", games: "🎮", terminal: "🖥️"
+    }[id] || "📦";
+  }
+
+  function capitalize(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  // Start OS
+  window.onload = emojiOSBoot;
+</script>
+<script>
+  function getAppContent(id) {
+    switch (id) {
+      case "calculator":
+        return `<input id="calcDisplay" type="text" style="width:100%; font-size:20px; text-align:right;" />
+          <br />
+          <div>${["7","8","9","/","4","5","6","*","1","2","3","-","0",".","=","+"].map(b =>
+          `<button onclick="pressCalc('${b}')">${b}</button>`).join('')}</div>`;
+
+      case "notes":
+        return `<textarea id="noteArea" style="width:100%; height:80%;"></textarea>`;
+
+      case "image":
+        return `<input type="file" id="imgUpload" accept="image/*" /><br /><img id="uploadedImage" style="max-width:100%; border-radius:8px;" />`;
+
+      case "explorer":
+        return `<div>
+          <select id="folderSelect">
+            <option value="Pictures">📷 Pictures</option>
+            <option value="Documents">📄 Documents</option>
+            <option value="Games">🎮 Games</option>
+          </select>
+          <ul id="fileList" style="margin-top:10px;"></ul>
+        </div>`;
+
+      case "settings":
+        return `<h3>EmojiOS Settings</h3>
+          <label><input type="checkbox" id="wallpaperToggle" checked /> Emoji Wallpaper</label><br />
+          <label>Theme:
+            <select id="themeSelect">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </label><br />
+          <label>Font Size: <input type="range" id="fontSlider" min="12" max="24" value="16" /></label>`;
+
+      case "browser":
+        return `<select id="serverSelect">
+            <option value="https://whyskibidisigmabro.yes.flop.hpc.tw">Server 1</option>
+            <option value="https://ram3-shikenaka.techplancad.ru/">Server 2</option>
+            <option value="https://study-work.cbu.net/">Server 3</option>
+          </select>
+          <iframe id="browserFrame" style="width:100%; height:80%; border:none;"></iframe>`;
+
+      case "clock":
+        return `<h2 id="clockTime">🕰️ 00:00:00</h2>`;
+
+      case "games":
+        return `<iframe src="main/assets/slope.html" style="width:100%; height:100%; border:none;"></iframe>`;
+
+      case "terminal":
+        return `<div style="font-family:monospace; font-size:14px;">
+          <div id="termLog"></div>
+          <input id="termInput" type="text" placeholder="Type a command..." style="width:100%;" />
+        </div>`;
+
+      default:
+        return `<p>App not found</p>`;
+    }
+  }
+
+  // Setup Functions
+  function setupExplorer() {
+    const fileData = {
+      Pictures: ["🖼️ selfie.png", "📸 vacation.jpg"],
+      Documents: ["📄 resume.docx", "📝 notes.txt"],
+      Games: ["🎮 pong.js", "🕹️ breakout.html"]
+    };
+    const select = document.getElementById("folderSelect");
+    const list = document.getElementById("fileList");
+
+    function renderFiles(folder) {
+      list.innerHTML = fileData[folder].map(f => `<li>${f}</li>`).join("");
+    }
+    select.addEventListener("change", e => renderFiles(e.target.value));
+    renderFiles(select.value);
+  }
+
+  function setupBrowser() {
+    const select = document.getElementById("serverSelect");
+    const iframe = document.getElementById("browserFrame");
+    iframe.src = select.value;
+    select.addEventListener("change", () => iframe.src = select.value);
+  }
+
+  function setupNotes() {
+    const area = document.getElementById("noteArea");
+    area.value = localStorage.getItem("emojiNotes") || "";
+    area.addEventListener("input", () => {
+      localStorage.setItem("emojiNotes", area.value);
+    });
+  }
+
+  function setupImageViewer() {
+    document.getElementById("imgUpload").addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = evt => document.getElementById("uploadedImage").src = evt.target.result;
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  let calcValue = "";
+  function setupCalculator() {
+    document.getElementById("calcDisplay").value = "";
+    calcValue = "";
+  }
+  function pressCalc(val) {
+    if (val === "=") {
+      try { calcValue = eval(calcValue).toString(); } catch { calcValue = "Error"; }
+    } else {
+      calcValue += val;
+    }
+    document.getElementById("calcDisplay").value = calcValue;
+  }
+
+  function updateClock() {
+    const clockElem = document.getElementById("clockTime");
+    function tick() {
+      const now = new Date();
+      clockElem.textContent = `🕰️ ${now.toLocaleTimeString()}`;
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  function setupSettings() {
+    document.getElementById("wallpaperToggle").addEventListener("change", function () {
+      document.body.style.backgroundImage = this.checked
+        ? "url('https://em-content.zobj.net/thumbs/240/apple/354/star_2b50.png')" : "none";
+    });
+    document.getElementById("themeSelect").addEventListener("change", function () {
+      document.body.style.backgroundColor = this.value === "dark" ? "#1e1e1e" : "#f1f1f1";
+    });
+    document.getElementById("fontSlider").addEventListener("input", function () {
+      document.body.style.fontSize = `${this.value}px`;
+    });
+  }
+
+  function setupTerminal() {
+    const input = document.getElementById("termInput");
+    const log = document.getElementById("termLog");
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        const cmd = input.value.trim();
+        input.value = "";
+        log.innerHTML += `<div>➜ ${cmd}</div>`;
+        switch (cmd) {
+          case "help": log.innerHTML += "<div>Commands: help, echo [text], clear, date</div>"; break;
+          case "clear": log.innerHTML = ""; break;
+          case "date": log.innerHTML += `<div>${new Date().toString()}</div>`; break;
+          default:
+            if (cmd.startsWith("echo ")) {
+              log.innerHTML += `<div>${cmd.slice(5)}</div>`;
+            } else {
+              log.innerHTML += `<div>Command not found: ${cmd}</div>`;
+            }
+        }
+      }
+    });
+  }
+
+  function setupGames() {
+    console.log("Slope game loaded from GitHub.");
+  }
 </script>
 </body>
 </html>
+
