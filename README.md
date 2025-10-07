@@ -4,3 +4,4 @@ Here is some info about our latest realease.
 Latest Realease: 0.0.2
 Errors: Game app doesn't work.
 Pin function doesn't work.
+I'm the successor of wsp-123 this is now the official respitory
